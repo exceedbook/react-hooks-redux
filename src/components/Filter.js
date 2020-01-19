@@ -1,37 +1,38 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment } from "react";
 
-export class Filter extends Component {
-  renderManufacturers = () => {
-    return this.props.filters.manufacturers.map((e, i) => {
+export const Filter = ({
+  setSearchHandler,
+  filters,
+  setManufacturerHandler
+}) => {
+  const renderManufacturers = () => {
+    return filters.manufacturers.map((e, i) => {
       return (
         <div className="filter-manufacturer">
           <input
-          key={e.index}
+            key={e.index}
             type="checkbox"
             checked={e.selected}
-            onChange={() => this.props.setManufacturerHandler(i)}
+            onChange={() => setManufacturerHandler(i)}
           />
           {e.name}
         </div>
       );
     });
   };
-  render() {
-    const { setSearchHandler, filters } = this.props;
 
-    return (
-      <Fragment>
-        <input
-          value={filters.search}
-          className="filter-search"
-          onChange={e => setSearchHandler(e.target.value)}
-          placeholder="Search"
-        />
-        <div>
-          Manufacturer:
-          <div>{this.renderManufacturers()}</div>
-        </div>
-      </Fragment>
-    );
-  }
-}
+  return (
+    <Fragment>
+      <input
+        value={filters.search}
+        className="filter-search"
+        onChange={e => setSearchHandler(e.target.value)}
+        placeholder="Search"
+      />
+      <div>
+        Manufacturer:
+        <div>{renderManufacturers()}</div>
+      </div>
+    </Fragment>
+  );
+};

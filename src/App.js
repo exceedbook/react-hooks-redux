@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Shop from "./components/Shop";
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ContactUs";
@@ -10,8 +10,8 @@ import { data, manufacturers } from "./db/db";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
-class App extends Component {
-  state = {
+const App = () => {
+  const [state, setState] = useState({
     items: data,
     cartItems: [],
     filter: {
@@ -19,38 +19,38 @@ class App extends Component {
       manufacturers: manufacturers,
       selectedManufacturers: []
     }
-  };
+  });
 
-  addItemToCartHandler = newItem => {
-    this.setState({
-      ...this.state,
-      items: this.state.items.filter(e => {
+  const addItemToCartHandler = newItem => {
+    setState({
+      ...state,
+      items: state.items.filter(e => {
         if (e._id === newItem._id) {
           e.selected = !e.selected;
         }
         return true;
       }),
-      cartItems: this.state.cartItems.concat([newItem])
+      cartItems: state.cartItems.concat([newItem])
     });
   };
 
-  removeItemFromCartHandler = id => {
-    this.setState({
-      ...this.state,
-      items: this.state.items.filter(e => {
+  const removeItemFromCartHandler = id => {
+    setState({
+      ...state,
+      items: state.items.filter(e => {
         if (e._id === id) {
           e.selected = !e.selected;
         }
         return true;
       }),
-      cartItems: this.state.cartItems.filter(e => (e._id === id ? false : true))
+      cartItems: state.cartItems.filter(e => (e._id === id ? false : true))
     });
   };
 
-  flushCartHandler = () => {
-    this.setState({
-      ...this.state,
-      items: this.state.items.filter(e => {
+  const flushCartHandler = () => {
+    setState({
+      ...state,
+      items: state.items.filter(e => {
         e.selected = false;
         return true;
       }),
@@ -58,21 +58,21 @@ class App extends Component {
     });
   };
 
-  setSearchHandler = newValue => {
-    this.setState({
-      ...this.state,
+  const setSearchHandler = newValue => {
+    setState({
+      ...state,
       filter: {
-        ...this.state.filter,
+        ...state.filter,
         search: newValue
       }
     });
   };
 
-  setManufacturerHandler = index => {
-    this.setState({
-      ...this.state,
+  const setManufacturerHandler = index => {
+    setState({
+      ...state,
       filter: {
-        ...this.state.filter,
+        ...state.filter,
         manufacturers: manufacturers.map((e, i) => {
           if (i === index) {
             e.selected = !e.selected;
@@ -84,48 +84,45 @@ class App extends Component {
     });
   };
 
-  render() {
-    return (
-      <Router>
-        <MenuBar
-          currentPage={this.state.currentPage}
-          setCurrentPageHandler={this.setCurrentPageHandler}
-          counter={this.state.cartItems.length}
-        />
-        <Switch>
-          <Route exact path="/">
-            <Shop
-              items={this.state.items}
-              filter={this.state.filter}
-              addItemToCartHandler={this.addItemToCartHandler}
-              removeItemFromCartHandler={this.removeItemFromCartHandler}
-              setSearchHandler={this.setSearchHandler}
-              setManufacturerHandler={this.setManufacturerHandler}
-            />
-          </Route>
-          <Route path="/cart">
-            <Cart
-              items={this.state.cartItems}
-              addItemToCartHandler={this.addItemToCartHandler}
-              removeItemFromCartHandler={this.removeItemFromCartHandler}
-            />
-          </Route>
-          <Route path="/terms-conditions">
-            <TermsConditions />
-          </Route>
-          <Route path="/about-us">
-            <AboutUs />
-          </Route>
-          <Route path="/contact-us">
-            <ContactUs />
-          </Route>
-          <Route path="/checkout">
-            <Checkout flushCartHandler={this.flushCartHandler} />
-          </Route>
-        </Switch>
-      </Router>
-    );
-  }
-}
+  return (
+    <Router>
+      <MenuBar
+        currentPage={state.currentPage}
+        counter={state.cartItems.length}
+      />
+      <Switch>
+        <Route exact path="/">
+          <Shop
+            items={state.items}
+            filter={state.filter}
+            addItemToCartHandler={addItemToCartHandler}
+            removeItemFromCartHandler={removeItemFromCartHandler}
+            setSearchHandler={setSearchHandler}
+            setManufacturerHandler={setManufacturerHandler}
+          />
+        </Route>
+        <Route path="/cart">
+          <Cart
+            items={state.cartItems}
+            addItemToCartHandler={addItemToCartHandler}
+            removeItemFromCartHandler={removeItemFromCartHandler}
+          />
+        </Route>
+        <Route path="/terms-conditions">
+          <TermsConditions />
+        </Route>
+        <Route path="/about-us">
+          <AboutUs />
+        </Route>
+        <Route path="/contact-us">
+          <ContactUs />
+        </Route>
+        <Route path="/checkout">
+          <Checkout flushCartHandler={flushCartHandler} />
+        </Route>
+      </Switch>
+    </Router>
+  );
+};
 
 export default App;

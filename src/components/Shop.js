@@ -1,10 +1,16 @@
-import React, { Component } from "react";
+import React from "react";
 import { ItemShop } from "./ItemShop";
 import { Filter } from "./Filter";
 
-class Shop extends Component {
-  renderItems = () => {
-    const { filter, items } = this.props;
+const Shop = ({
+  filter,
+  items,
+  addItemToCartHandler,
+  removeItemFromCartHandler,
+  setSearchHandler,
+  setManufacturerHandler
+}) => {
+  const renderItems = () => {
     return items.map(e => {
       const searchMatch =
         e.title.toUpperCase().search(filter.search.toUpperCase()) !== -1;
@@ -20,28 +26,26 @@ class Shop extends Component {
           <ItemShop
             key={e._id}
             item={e}
-            addItemToCartHandler={this.props.addItemToCartHandler}
-            removeItemFromCartHandler={this.props.removeItemFromCartHandler}
+            addItemToCartHandler={addItemToCartHandler}
+            removeItemFromCartHandler={removeItemFromCartHandler}
           />
         )
       );
     });
   };
 
-  render() {
-    return (
-      <div className="page-body shop-page">
-        <div className="shop-items-filter-settings page-element">
-          <Filter
-            filters={this.props.filter}
-            setSearchHandler={this.props.setSearchHandler}
-            setManufacturerHandler={this.props.setManufacturerHandler}
-          />
-        </div>
-        <div className="shop-items-table">{this.renderItems()}</div>
+  return (
+    <div className="page-body shop-page">
+      <div className="shop-items-filter-settings page-element">
+        <Filter
+          filters={filter}
+          setSearchHandler={setSearchHandler}
+          setManufacturerHandler={setManufacturerHandler}
+        />
       </div>
-    );
-  }
-}
+      <div className="shop-items-table">{renderItems()}</div>
+    </div>
+  );
+};
 
 export default Shop;
