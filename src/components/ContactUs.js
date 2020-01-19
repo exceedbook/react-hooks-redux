@@ -1,32 +1,12 @@
 import React, { useState, Fragment } from "react";
 import Popup from "./Popup";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as actionsContactUs from "../actions/contact-us-actions";
 
-const ContactUs = () => {
-  const [state, setState] = useState({
-    email: "",
-    msg: ""
-  });
+const ContactUs = ({ email, msg, formDataHasError, actionsContactUs }) => {
   const [popupActive, renderPopup] = useState(false);
-  const [formDataHasError, showError] = useState(false);
-
-  const changeEmailHandler = value =>
-    setState({
-      ...state,
-      email: value
-    });
-
-  const changeMessageHandler = value =>
-    setState({
-      ...state,
-      msg: value
-    });
-
-  const flushStateHandler = () =>
-    setState({
-      ...state,
-      email: "",
-      msg: ""
-    });
+  const { setEmail, setMessage, flushForm, showError } = actionsContactUs;
 
   const showPopup = (hasError = false) => {
     renderPopup(true);
@@ -38,11 +18,11 @@ const ContactUs = () => {
   };
 
   const sendContactForm = () => {
-    if (!(state.email.trim() && state.msg.trim())) {
+    if (!(email.trim() && msg.trim())) {
       showPopup(true);
     } else {
       showPopup();
-      flushStateHandler();
+      flushForm();
     }
   };
 
@@ -73,16 +53,16 @@ const ContactUs = () => {
           <h2>CONTACT US</h2>
           E-mail:
           <input
-            value={state.email}
+            value={email}
             className="filter-small"
-            onChange={e => changeEmailHandler(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             placeholder="Enter your email"
           />
           Message:
           <textarea
-            value={state.msg}
+            value={msg}
             className="input-field-large"
-            onChange={e => changeMessageHandler(e.target.value)}
+            onChange={e => setMessage(e.target.value)}
             placeholder="Enter your message..."
           />
           <button className="common-btn" onClick={() => sendContactForm()}>
@@ -94,4 +74,14 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+const mapDispatchToProps = dispatch => {
+  return {
+    actionsContactUs: bindActionCreators(actionsContactUs, dispatch)
+  };
+};
+
+function mapStateToProps(state) {
+  return state.contactFormReducer;
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ContactUs);

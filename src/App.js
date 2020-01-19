@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Shop from "./components/Shop";
 import AboutUs from "./components/AboutUs";
 import ContactUs from "./components/ContactUs";
@@ -6,106 +6,36 @@ import TermsConditions from "./components/TermsConditions";
 import Checkout from "./components/Checkout";
 import Cart from "./components/Cart";
 import { MenuBar } from "./components/MenuBar";
-import { data, manufacturers } from "./db/db";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import * as actionsCart from "./actions/cart-actions";
+import * as actionsFilter from "./actions/filter-actions";
 
-const App = () => {
-  const [state, setState] = useState({
-    items: data,
-    cartItems: [],
-    filter: {
-      search: "",
-      manufacturers: manufacturers,
-      selectedManufacturers: []
-    }
-  });
-
-  const addItemToCartHandler = newItem => {
-    setState({
-      ...state,
-      items: state.items.filter(e => {
-        if (e._id === newItem._id) {
-          e.selected = !e.selected;
-        }
-        return true;
-      }),
-      cartItems: state.cartItems.concat([newItem])
-    });
-  };
-
-  const removeItemFromCartHandler = id => {
-    setState({
-      ...state,
-      items: state.items.filter(e => {
-        if (e._id === id) {
-          e.selected = !e.selected;
-        }
-        return true;
-      }),
-      cartItems: state.cartItems.filter(e => (e._id === id ? false : true))
-    });
-  };
-
-  const flushCartHandler = () => {
-    setState({
-      ...state,
-      items: state.items.filter(e => {
-        e.selected = false;
-        return true;
-      }),
-      cartItems: []
-    });
-  };
-
-  const setSearchHandler = newValue => {
-    setState({
-      ...state,
-      filter: {
-        ...state.filter,
-        search: newValue
-      }
-    });
-  };
-
-  const setManufacturerHandler = index => {
-    setState({
-      ...state,
-      filter: {
-        ...state.filter,
-        manufacturers: manufacturers.map((e, i) => {
-          if (i === index) {
-            e.selected = !e.selected;
-          }
-          return e;
-        }),
-        selectedManufacturers: manufacturers.filter(e => e.selected === true)
-      }
-    });
-  };
+const App = props => {
+  const { addToCart, removeItemFromCart, flushCart } = props.actionsCart;
+  const { setSearch, setManufacturer } = props.actionsFilter;
 
   return (
     <Router>
-      <MenuBar
-        currentPage={state.currentPage}
-        counter={state.cartItems.length}
-      />
+      <MenuBar counter={props.cartItems.length} />
       <Switch>
         <Route exact path="/">
           <Shop
-            items={state.items}
-            filter={state.filter}
-            addItemToCartHandler={addItemToCartHandler}
-            removeItemFromCartHandler={removeItemFromCartHandler}
-            setSearchHandler={setSearchHandler}
-            setManufacturerHandler={setManufacturerHandler}
+            items={props.items}
+            filter={props.filter}
+            addItemToCartHandler={addToCart}
+            removeItemFromCartHandler={removeItemFromCart}
+            setSearchHandler={setSearch}
+            setManufacturerHandler={setManufacturer}
           />
         </Route>
         <Route path="/cart">
           <Cart
-            items={state.cartItems}
-            addItemToCartHandler={addItemToCartHandler}
-            removeItemFromCartHandler={removeItemFromCartHandler}
+            items={props.cartItems}
+            addItemToCartHandler={addToCart}
+            removeItemFromCartHandler={removeItemFromCart}
           />
         </Route>
         <Route path="/terms-conditions">
@@ -118,11 +48,25 @@ const App = () => {
           <ContactUs />
         </Route>
         <Route path="/checkout">
-          <Checkout flushCartHandler={flushCartHandler} />
+          <Checkout flushCartHandler={flushCart} />
         </Route>
       </Switch>
     </Router>
   );
 };
 
-export default App;
+const mapDispatchToProps = dispatch => {
+  return {
+    actionsCart: bindActionCreators(actionsCart, dispatch),
+    actionsFilter: bindActionCreators(actionsFilter, dispatch)
+  };
+};
+
+const mapStateToProps = state => {
+  return {
+    ...state.cartReducer,
+    ...state.filterReducer
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
