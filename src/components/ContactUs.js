@@ -4,9 +4,8 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import * as actionsContactUs from "../actions/contact-us-actions";
 
-const ContactUs = ({ email, msg, formDataHasError, actionsContactUs }) => {
+const ContactUs = ({ email, msg, formDataHasError, setEmail, setMessage, flushForm, showError }) => {
   const [popupActive, renderPopup] = useState(false);
-  const { setEmail, setMessage, flushForm, showError } = actionsContactUs;
 
   const showPopup = (hasError = false) => {
     renderPopup(true);
@@ -74,14 +73,8 @@ const ContactUs = ({ email, msg, formDataHasError, actionsContactUs }) => {
   );
 };
 
-const mapDispatchToProps = dispatch => {
-  return {
-    actionsContactUs: bindActionCreators(actionsContactUs, dispatch)
-  };
-};
+const mapDispatchToProps = dispatch =>  bindActionCreators(actionsContactUs, dispatch);
 
-function mapStateToProps(state) {
-  return state.contactFormReducer;
-}
+const mapStateToProps = (state) => state.contactFormReducer;
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContactUs);
