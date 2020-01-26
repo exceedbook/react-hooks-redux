@@ -13,18 +13,16 @@ import { bindActionCreators } from "redux";
 import * as actionsCart from "./actions/cart-actions";
 import * as actionsFilter from "./actions/filter-actions";
 
-const App = props => {
-  const { addToCart, removeItemFromCart, flushCart } = props.actionsCart;
-  const { setSearch, setManufacturer } = props.actionsFilter;
+const App = ({ cartItems, items, filter, addToCart, removeItemFromCart, flushCart, setSearch, setManufacturer }) => {
 
   return (
     <Router>
-      <MenuBar counter={props.cartItems.length} />
+      <MenuBar counter={cartItems.length} />
       <Switch>
         <Route exact path="/">
           <Shop
-            items={props.items}
-            filter={props.filter}
+            items={items}
+            filter={filter}
             addItemToCartHandler={addToCart}
             removeItemFromCartHandler={removeItemFromCart}
             setSearchHandler={setSearch}
@@ -33,7 +31,7 @@ const App = props => {
         </Route>
         <Route path="/cart">
           <Cart
-            items={props.cartItems}
+            items={cartItems}
             addItemToCartHandler={addToCart}
             removeItemFromCartHandler={removeItemFromCart}
           />
@@ -57,8 +55,8 @@ const App = props => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    actionsCart: bindActionCreators(actionsCart, dispatch),
-    actionsFilter: bindActionCreators(actionsFilter, dispatch)
+    ...bindActionCreators(actionsCart, dispatch),
+    ...bindActionCreators(actionsFilter, dispatch)
   };
 };
 
