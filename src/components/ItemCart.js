@@ -8,7 +8,7 @@ export const ItemCart = ({ item, removeItemFromCartHandler }) => {
   };
 
   return (
-    <div className="ItemCart">
+    <div className="item-cart">
       <div className="item-header">
         <img className="item-picture" src={item.picture} alt="not found" />
         <div>
