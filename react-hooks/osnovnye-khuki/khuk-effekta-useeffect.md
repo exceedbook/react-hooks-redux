@@ -65,7 +65,7 @@ function counter(props) {
 
 `сomponentWillUnmount()` вызывается непосредственно перед демонтированием и уничтожением компонента.
 
-Чтобы повторить `сomponentWillUnmount()` , необходимо возвращать в `useEffect` функцию отчистки:
+Чтобы повторить `сomponentWillUnmount()` , необходимо возвращать в `useEffect` функцию очистки:
 
 ```jsx
   ...
